@@ -19,6 +19,12 @@
 		<li><a href="${pageContext.request.contextPath }/user_agent.do">UserAgent 확인 예제</a></li>
 	</ul>
 	
+	<!-- Get/Post 테스트 -->
+	<h2>ParamController</h2>
+	<ul>
+		<li><a href="${pageContext.request.contextPath }/params/home.do">Get/Post 테스트</a></li>
+	</ul>
+	
 	<script src="${pageContext.request.contextPath }/assets/js/script.js"></script>
 </body>
 </html>
