@@ -50,6 +50,33 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+	<!-- DATABASE 연동 관련 로그 설정 시작 -->
+	<!-- 너무 많은 로그 출력 방지를 위해 SQL처리과정을 제외한 다른 로그는 OFF. 에러발생시에만 표시 -->
+	<logger name="org.apache.ibatis">
+		<level value="DEBUG" />
+	</logger>
+	<logger name="jdbc.sqlonly">
+		<level value="INFO" />
+	</logger>
+	<logger name="jdbc.sqltiming">
+		<level value="OFF" />
+	</logger>
+	<logger name="jdbc.audit">
+		<level value="OFF" />
+	</logger>
+	<logger name="jdbc.resultset">
+		<level value="ERROR" />
+	</logger>
+	<logger name="jdbc.resultsettable">
+		<level value="DEBUG" />
+	</logger>
+	<logger name="jdbc.connection">
+		<level value="ERROR" />
+	</logger>
+	<logger name="log4jdbc.debug">
+		<level value="ERROR" />
+	</logger>
 
 	<!-- Root Logger -->
 	<root>

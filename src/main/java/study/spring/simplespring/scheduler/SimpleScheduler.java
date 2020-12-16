@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import lombok.extern.slf4j.Slf4j;
 import study.spring.simplespring.service.ProfessorService;
 
-// 스케쥴링에 다라 실행될 컨트롤러 정의
+// 스케쥴링에 따라 실행될 컨트롤러 정의
 @Slf4j
 @Controller
 public class SimpleScheduler

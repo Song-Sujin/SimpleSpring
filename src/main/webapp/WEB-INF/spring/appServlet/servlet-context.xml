@@ -37,14 +37,6 @@
 	<!-- 웹 리소스 위치에 대한 URL 매핑 -->
 	<resources location="/WEB-INF/views/assets/" mapping="/assets/**"></resources>
 	
-	<!-- 인터셉터 등록 -->
-	<interceptors>
-		<interceptor>
-			<mapping path="/**"/>
-			<beans:bean id="appInterceptor" class="study.spring.simplespring.interceptor.AppInterceptor"/>
-		</interceptor>
-	</interceptors>
-	
 	<!-- 스케쥴러 어노테이션 선언 -->
 	<task:annotation-driven/>
 	
@@ -63,5 +55,14 @@
 		<!-- 매일 자정에 실행되는 작업 -->
 		<task:scheduled ref="scheduleJob" method="everyMidnight" cron="0 0 0 * * ?"/>
 	</task:scheduled-tasks>
+	
+	
+	<!-- 인터셉터 등록 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/**"/>
+			<beans:bean id="appInterceptor" class="study.spring.simplespring.interceptor.AppInterceptor"/>
+		</interceptor>
+	</interceptors>
 	
 </beans:beans>
