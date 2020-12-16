@@ -18,8 +18,27 @@
 <hr/>
 
 <!-- POST 파라미터 전송 테스트 -->
+<h1>당신의 이름과 나이를 입력해 주세요.</h1>
+<form name="form" method="post" action="${pageContext.request.contextPath }/params/post.do">
+	<label for="user_name">이름</label>
+	<input type="text" name="user_name" id="user_name"/>
+	&nbsp;
+	<label for="user_age">나이</label>
+	<input type="text" name="user_age" id="user_age"/>
+	&nbsp;
+	<button type="submit">전송</button>
+</form>
 
 <!-- PATH 파라미터 전송 테스트 -->
+<h1>PATH 파라미터 전송 테스트</h1>
+<div>
+	<a href="${pageContext.request.contextPath }/params/path1/hello/world/1234">
+		hello/world/1234</a>
+</div>
+<div>
+	<a href="${pageContext.request.contextPath }/params/path2/foo/bar/5678">
+		foo/bar/5678</a>
+</div>
 
 </body>
 </html>

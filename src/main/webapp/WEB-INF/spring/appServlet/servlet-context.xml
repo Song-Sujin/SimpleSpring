@@ -3,7 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -25,6 +27,8 @@
 	<!-- 향후 패키지가 추가되면 같은 형식의 구문을 추가한다. -->
 	<!-- 컨트롤러나 서비스의 구현체가 포함되어 있는 패키지들 나열 -->
 	<context:component-scan base-package="study.spring.simplespring.controllers"></context:component-scan>
+	<!-- Service추가하고나서 추가 -->
+	<context:component-scan base-package="study.spring.simplespring.service.impl"></context:component-scan>
 	
 	<!-- 컨트롤러 클래스나 서비스 구현체 클래스가 위치하는 패키지들을 명시. 필요에 따라 추가 가능 -->
 	<context:component-scan base-package="study.spring.simplespring" />
@@ -40,5 +44,24 @@
 			<beans:bean id="appInterceptor" class="study.spring.simplespring.interceptor.AppInterceptor"/>
 		</interceptor>
 	</interceptors>
+	
+	<!-- 스케쥴러 어노테이션 선언 -->
+	<task:annotation-driven/>
+	
+	<!-- 스케쥴러로 동작할 객체 생성 --><!-- SimpleScheduler 타입의 scheduleJob 객체생성 -->
+	<beans:bean id="scheduleJob" class="study.spring.simplespring.scheduler.SimpleScheduler"></beans:bean>
+	
+	<!-- Cron 스타일 스케쥴 설정 : http://www.cronmaker.com/ -->
+	<!-- 생성한 스케쥴러의 객체에 대한 작업 스케쥴 지정 -->
+	<task:scheduled-tasks>
+		<!-- 1초마다 실행되는 작업 -->
+		<task:scheduled ref="scheduleJob" method="everySeconds" cron="* * * * * ?"/>
+		<!-- 매 분 0초에 실행되는 작업 -->
+		<task:scheduled ref="scheduleJob" method="everyMinites" cron="0 * * * * ?"/>
+		<!-- 10초마다 한 번씩 실행되는 작업 -->
+		<task:scheduled ref="scheduleJob" method="every10Seconds" cron="0/10 * * * * ?"/>
+		<!-- 매일 자정에 실행되는 작업 -->
+		<task:scheduled ref="scheduleJob" method="everyMidnight" cron="0 0 0 * * ?"/>
+	</task:scheduled-tasks>
 	
 </beans:beans>

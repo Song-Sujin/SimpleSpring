@@ -25,6 +25,24 @@
 		<li><a href="${pageContext.request.contextPath }/params/home.do">Get/Post 테스트</a></li>
 	</ul>
 	
+	<!-- Cookie 테스트 -->
+	<h2>CookieController</h2>
+	<ul>
+		<li><a href="${pageContext.request.contextPath }/cookie/write.do">Cookie 테스트</a></li>
+	</ul>
+	
+	<!-- Session 테스트 -->
+	<h2>SessionController</h2>
+	<ul>
+		<li><a href="${pageContext.request.contextPath }/session/write.do">Session 테스트</a></li>
+	</ul>
+	
+	<!-- AOP 테스트 -->
+	<h2>AOPController</h2>
+	<ul>
+		<li><a href="${pageContext.request.contextPath }/aop/calc.do">AOP 테스트</a></li>
+	</ul>
+	
 	<script src="${pageContext.request.contextPath }/assets/js/script.js"></script>
 </body>
 </html>
