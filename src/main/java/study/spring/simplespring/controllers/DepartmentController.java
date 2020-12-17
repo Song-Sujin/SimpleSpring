@@ -30,15 +30,24 @@ public class DepartmentController
 
 	// 목록 페이지
 	@RequestMapping(value = "/department/list.do", method = RequestMethod.GET)
-	public String list(Model model, HttpServletResponse response)
+	public String list(Model model, HttpServletResponse response,
+			// 검색어. 검색어가 없는 경우도 있으므로 false로 설정
+			@RequestParam(value="keyword", required=false) String keyword)
 	{
+		// 조회에 필요한 조건값(검색어)를 Beans에 담는다.
+		// 파라미터로 전달된 검색어는 Beans에 담겨서 Service로 전달되고 Service는 Beans를 Mapper로 전달한다.
+		// Mapper에는 검색을 위한 WHERE절이 이미 구현되어 있으므로 검색 결과를 표시할 수 있다.
+		Department input = new Department();
+		input.setDname(keyword);
+		input.setLoc(keyword);
+		
 		List<Department> output = null;	// 조회결과가 저장될 객체
 		
 		// 특별한 조건 검색 없이 전체 데이터를 조회하기
 		try
 		{
 			// 데이터 조회하기
-			output = departmentService.getDepartmentList(null);
+			output = departmentService.getDepartmentList(input);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -46,6 +55,9 @@ public class DepartmentController
 		
 		// View 처리
 		model.addAttribute("output", output);
+		model.addAttribute("keyword", keyword);	// 검색을 위해 전달한 GET 파라미터를 컨트롤러가 수신하고
+												// 이 값을 다시 View에게 전달한다.
+												// View는 전달받은 검색어를 <input> 태그의 value 속성에 출력한다.
 		return "department/list";
 	}
 
