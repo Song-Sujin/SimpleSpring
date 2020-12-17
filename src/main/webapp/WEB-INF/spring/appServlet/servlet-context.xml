@@ -30,6 +30,7 @@
 	<!-- Service추가하고나서 추가 -->
 	<context:component-scan base-package="study.spring.simplespring.service.impl"></context:component-scan>
 	
+	
 	<!-- 컨트롤러 클래스나 서비스 구현체 클래스가 위치하는 패키지들을 명시. 필요에 따라 추가 가능 -->
 	<context:component-scan base-package="study.spring.simplespring" />
 	
