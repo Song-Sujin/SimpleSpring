@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import study.spring.simplespring.helper.PageData;
 import study.spring.simplespring.model.Department;
 import study.spring.simplespring.service.DepartmentService;
 
@@ -32,8 +33,15 @@ public class DepartmentController
 	@RequestMapping(value = "/department/list.do", method = RequestMethod.GET)
 	public String list(Model model, HttpServletResponse response,
 			// 검색어. 검색어가 없는 경우도 있으므로 false로 설정
-			@RequestParam(value="keyword", required=false) String keyword)
+			@RequestParam(value="keyword", required=false) String keyword,
+			// 페이지 구현에서 사용할 현재 페이지 번호. 페이지 번호가 없을 경우 1페이지로 인식할 수 있도록 기본값 설정
+			@RequestParam(value="page", defaultValue="1") int nowPage)
 	{
+		//-- 페이징 처리--
+		int totalCount = 0;		// 전체 게시글 수
+		int listCount = 10;		// 한 페이지당 표시할 목록 수
+		int pageCount = 5;		// 한 그룹당 표시할 페이지 번호 수
+		
 		// 조회에 필요한 조건값(검색어)를 Beans에 담는다.
 		// 파라미터로 전달된 검색어는 Beans에 담겨서 Service로 전달되고 Service는 Beans를 Mapper로 전달한다.
 		// Mapper에는 검색을 위한 WHERE절이 이미 구현되어 있으므로 검색 결과를 표시할 수 있다.
@@ -42,11 +50,22 @@ public class DepartmentController
 		input.setLoc(keyword);
 		
 		List<Department> output = null;	// 조회결과가 저장될 객체
+		PageData pageData = null;		// 페이지 번호를 계산한 결과가 저장될 객체
 		
-		// 특별한 조건 검색 없이 전체 데이터를 조회하기
+		
 		try
 		{
-			// 데이터 조회하기
+			// 전체 게시글 수 조회
+			totalCount = departmentService.getDepartmentCount(input);
+			// 페이지 번호 계산 --> 계산결과를 로그로 출력될 것이다.
+			pageData = new PageData(nowPage, totalCount, listCount, pageCount);
+			
+			// SQL의 LIMIT절에서 사용될 값을 Beans의 static 변수에 저장
+			Department.setOffset(pageData.getOffset());
+			Department.setListCount(pageData.getListCount());
+			//--> 페이지 번호에 필요한 연산 수행 후 Limit절에 필요한 값을 Mapper로 전달
+			
+			// 특별한 조건 검색 없이 전체 데이터를 조회하기
 			output = departmentService.getDepartmentList(input);
 		} catch (Exception e)
 		{
@@ -58,6 +77,8 @@ public class DepartmentController
 		model.addAttribute("keyword", keyword);	// 검색을 위해 전달한 GET 파라미터를 컨트롤러가 수신하고
 												// 이 값을 다시 View에게 전달한다.
 												// View는 전달받은 검색어를 <input> 태그의 value 속성에 출력한다.
+		model.addAttribute("pageData", pageData);
+		
 		return "department/list";
 	}
 
@@ -132,15 +153,89 @@ public class DepartmentController
 
 	// 삭제 처리 구현
 	@RequestMapping(value = "/department/delete_ok.do", method = RequestMethod.GET)
-	public void deleteOk(Model model, HttpServletResponse response)
+	public void deleteOk(Model model, HttpServletResponse response,
+			@RequestParam(value="deptno") int deptno)	// 삭제할 대상의 PK값을 GET파라미터로 받는다.
 	{
+		// 데이터 삭제에 필요한 조건값을 Beans에 저장하기
+		Department input = new Department();
+		input.setDeptno(deptno);
+		
+		try
+		{
+			// 데이터 삭제
+			departmentService.deleteDepartment(input);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// 확인할 대상이 삭제된 상태이므로 목록 페이지로 이동
+		try
+		{
+			response.sendRedirect(contextPath + "/department/list.do");
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	// 수정 폼 페이지
 	@RequestMapping(value = "/department/edit.do", method = RequestMethod.GET)
-	public String edit(Model model, HttpServletResponse response)
+	public String edit(Model model, HttpServletResponse response,
+			@RequestParam(value="deptno") int deptno)	// 수정할 데이터에 대한 PK값을 파라미터로 받고, 해당 데이터를 조회하여 View로 전달
 	{
+		// 데이터 조회에 필요한 조건값을 Beans에 저장하기
+		Department input = new Department();
+		input.setDeptno(deptno);
+		
+		// 수정할 데이터의 원본 조회하기
+		Department output = null;
+		
+		try
+		{
+			output = departmentService.getDepartmentItem(input);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// View 처리
+		model.addAttribute("output", output);
+		
 		return "department/edit";
+	}
+	
+	// 수정 폼에 대한 action 페이지
+	@RequestMapping(value="/department/edit_ok.do", method=RequestMethod.POST)
+	public void editOk(Model model, HttpServletResponse response,
+			@RequestParam(value="deptno") int deptno,
+			@RequestParam(value="dname") String dname,
+			@RequestParam(value="loc") String loc)
+	{
+		// 수정할 값들을 Beans에 담는다.
+		Department input = new Department();
+		input.setDeptno(deptno);
+		input.setDname(dname);
+		input.setLoc(loc);
+		
+		try
+		{
+			// 데이터 수정
+			departmentService.editDepartment(input);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// 수정한 대상을 상세페이지에 알려주기 위해서 PK값을 전달해야 한다.
+		String redirectUrl = contextPath + "/department/detail.do?deptno=" + input.getDeptno();
+		try
+		{
+			response.sendRedirect(redirectUrl);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 }
